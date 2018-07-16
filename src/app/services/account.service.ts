@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IStock } from "./stocks.model"
+import { LocalStorageService } from "./local-storage.service"
 
 @Injectable()
 export class AccountService {
@@ -9,6 +10,8 @@ export class AccountService {
   private costF: number = 0;
   private valueF: number = 0;
   private stocksF: IStock[] = [];
+
+  constructor(private localStorageService : LocalStorageService) { }
 
   // this.balanceF = how much money we have at the moment,
   // this.costF = how much we have spent for stock purchases.
@@ -21,6 +24,12 @@ export class AccountService {
 
   private credit(amount: number, affectedValue: number) : number {
     return (affectedValue * 100 + amount * 100) / 100;
+  }
+
+  private cacheValues() : void {
+    this.localStorageService.set("stocks", this.stocksF);
+    this.localStorageService.set("balance", this.balanceF);
+    this.localStorageService.set("cost", this.costF);
   }
 
   public get balance(): number { return this.balanceF; }
@@ -37,6 +46,8 @@ export class AccountService {
         stockCopy.change = 0;
         this.stocksF.push(stockCopy)
         this.calculateValue();
+        // Also store the current account state in the local storage.
+        this.cacheValues();
     }
   }
 
@@ -47,6 +58,8 @@ export class AccountService {
         this.stocksF.splice(index, 1);
         this.costF = this.debit(stock.cost, this.costF); // Decrease the cost by the stock "historical" price.
         this.calculateValue();
+        // Also store the current account state in the local storage.
+        this.cacheValues();
     }
   }
 
@@ -54,6 +67,14 @@ export class AccountService {
     this.stocksF = [];
     this.balanceF = AccountService.defaultBalance;
     this.valueF = this.costF = 0;
+    this.cacheValues();
+  }
+
+  // Is called from AppComponent ngOnInit() on application start.
+  public init() : void {
+    this.stocksF = this.localStorageService.get("stocks", []);
+    this.balanceF = this.localStorageService.get("balance", AccountService.defaultBalance);
+    this.costF = this.localStorageService.get("cost", 0);
   }
 
   public calculateValue() : void {
