@@ -29,8 +29,7 @@ export class InvestmentsComponent implements DoCheck {
       this.stocks = this.accountService.stocks;
     }
     // "stocks" arrays might not change, but market price fluctuactions might lead to AccountService.value
-    // is recomputed. Guess this check is applicable when some stock was sold and then bought again between
-    // dirty checks. Is that possible?
+    // is recomputed. This scenario is caused by AccountService.value recomputing by stocks-interceptor service.
     if (this.cost !== this.accountService.cost || this.value != this.accountService.value)
     {
       this.cost = this.accountService.cost;

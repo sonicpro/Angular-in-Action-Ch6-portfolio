@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { IStock } from "./stocks.model"
 import { LocalStorageService } from "./local-storage.service"
+import { AlertService } from "./alert.service"
+import { CurrencyPipe } from "@angular/common";
 
 @Injectable()
 export class AccountService {
@@ -11,7 +13,9 @@ export class AccountService {
   private valueF: number = 0;
   private stocksF: IStock[] = [];
 
-  constructor(private localStorageService : LocalStorageService) { }
+  constructor(private localStorageService : LocalStorageService,
+    private alertService : AlertService,
+    private currencyPipe: CurrencyPipe) { }
 
   // this.balanceF = how much money we have at the moment,
   // this.costF = how much we have spent for stock purchases.
@@ -48,6 +52,10 @@ export class AccountService {
         this.calculateValue();
         // Also store the current account state in the local storage.
         this.cacheValues();
+        this.alertService.alert(`You bought ${stockCopy.symbol} for ` +
+          this.currencyPipe.transform(stockCopy.price, "USD", true, ".2"), "success");
+    } else {
+      this.alertService.alert(`You have insufficient funds to buy ${stockCopy.symbol}`, "danger");
     }
   }
 
@@ -60,6 +68,8 @@ export class AccountService {
         this.calculateValue();
         // Also store the current account state in the local storage.
         this.cacheValues();
+        this.alertService.alert(`You sold ${stock.symbol} for ` +
+          this.currencyPipe.transform(stock.price, "USD", true, ".2"), "success");
     }
   }
 

@@ -1,4 +1,4 @@
-<!--<app-alert></app-alert>-->
+<app-alert></app-alert>
 <div class="main-container">
   <header class="header-6">
     <div class="branding">
@@ -13,7 +13,7 @@
       <span class="nav-link"><span class="nav-text">Cost: {{accountService.cost | currency:'USD':'symbol':'.2'}}</span></span>
       <span class="nav-link"><span class="nav-text">Return: {{accountService.value - accountService.cost | currency:'USD':'symbol':'.2'}}</span></span>
     </div>
-    <!--<div class="header-actions">
+    <div class="header-actions">
       <span class="nav-link"><span class="nav-text">All data is fictitious</span></span>
       <a class="nav-link nav-icon tooltip tooltip-bottom-left" (click)="toggleRefresh()" [class.active]="refresh">
         <clr-icon shape="sync"></clr-icon>
@@ -23,7 +23,7 @@
         <clr-icon shape="remove"></clr-icon>
         <span class="tooltip-content">Reset Your Portfolio</span>
       </a>
-    </div>-->
+    </div>
   </header>
   <nav class="subnav">
     <app-ticker [stocks]="stocks"></app-ticker>
